@@ -75,6 +75,20 @@ describe("Inheritance", function () {
           inheritance.connect(otherAccount).withdraw(1)
         ).to.be.revertedWith("You aren't the owner");
       });
+      it("Should revert with You can't withdraw more than the contract has", async function () {
+        const { inheritance, owner, otherAccount } = await loadFixture(
+          deployInheritanceFixture
+        );
+
+        await expect(
+          inheritance
+            .connect(owner)
+            .withdraw(
+              (await ethers.provider.getBalance(inheritance.target)) +
+                ethers.parseUnits("1", "ether")
+            )
+        ).to.be.revertedWith("You can't withdraw more than the contract has");
+      });
     });
 
     describe("WithdrawalTime", function () {
