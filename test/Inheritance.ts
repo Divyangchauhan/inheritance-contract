@@ -2,7 +2,6 @@ import {
   time,
   loadFixture,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -88,6 +87,22 @@ describe("Inheritance", function () {
                 ethers.parseUnits("1", "ether")
             )
         ).to.be.revertedWith("You can't withdraw more than the contract has");
+      });
+
+      it("Should increase owner's and decrease contract's balance by correct amount", async function () {
+        const { inheritance, owner, otherAccount } = await loadFixture(
+          deployInheritanceFixture
+        );
+
+        await inheritance
+          .connect(otherAccount)
+          .deposit({ value: ethers.parseUnits("2", "ether") });
+
+        expect(
+          await inheritance
+            .connect(owner)
+            .withdraw(ethers.parseUnits("2", "ether"))
+        ).to.changeEtherBalances([inheritance, owner], [-2, 2]);
       });
     });
 
