@@ -17,18 +17,9 @@ async function main() {
   );
   console.log(`owner address is  ${await signer.getAddress()}`);
 
-  console.log(`contract address is ${await contract.owner()}`);
   console.log(`Contract balance ${await provider.getBalance(contract.target)}`);
 
-  await contract.withdraw();
-
-  await new Promise((r) => setTimeout(r, 5000));
-
-  console.log(
-    `owner balance ${await provider.getBalance(signer.getAddress())}`
-  );
-
-  console.log(`Contract balance ${await provider.getBalance(contract.target)}`);
+  await contract.withdraw(ethers.parseUnits("1", "ether"));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
