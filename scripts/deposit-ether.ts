@@ -12,20 +12,9 @@ async function main() {
     signer
   );
 
-  console.log(
-    `Contract balance before depositing ${await provider.getBalance(
-      contract.target
-    )}`
-  );
   await contract.deposit({ value: ethers.parseUnits("1", "ether") });
 
   await new Promise((r) => setTimeout(r, 5000));
-
-  console.log(
-    `Contract balance after depositing ${await provider.getBalance(
-      contract.target
-    )}`
-  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -14,11 +14,6 @@ async function main() {
 
   console.log("\n Deploying contracts with the account:", deployer.address);
 
-  console.log(
-    "\n Account balance:",
-    (await deployer.provider.getBalance(deployer.address)).toString()
-  );
-
   const inheritance = await ethers.deployContract("Inheritance", [heir]);
 
   await inheritance.waitForDeployment();

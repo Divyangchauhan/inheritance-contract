@@ -12,12 +12,7 @@ async function main() {
     signer
   );
 
-  console.log(
-    `owner balance is ${await provider.getBalance(signer.getAddress())}`
-  );
   console.log(`owner address is  ${await signer.getAddress()}`);
-
-  console.log(`Contract balance ${await provider.getBalance(contract.target)}`);
 
   await contract.withdraw(ethers.parseUnits("1", "ether"));
 }
