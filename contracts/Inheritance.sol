@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
-
 contract Inheritance {
     uint public withdrawTime;
     address payable public owner;
@@ -22,23 +19,15 @@ contract Inheritance {
     function deposit() public payable {}
 
     function withdraw(uint _amount) public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Balance is %o", address(this).balance);
-        // console.log("Amount is %o", _amount);
-
         require(msg.sender == owner, "You aren't the owner");
-
-        if (_amount == 0) {
-            withdrawTime = block.timestamp + 30 days;
-            emit WithdrawalTimeIncrease(withdrawTime);
-            return;
-        }
 
         require(
             _amount <= address(this).balance,
             "You can't withdraw more than the contract has"
         );
 
+        withdrawTime = block.timestamp + 30 days;
+        emit WithdrawalTimeIncrease(withdrawTime);
         emit Withdrawal(_amount, block.timestamp, owner);
         owner.transfer(_amount);
     }
@@ -49,6 +38,8 @@ contract Inheritance {
         require(_heir != heir, "Owner can't be heir");
         owner = payable(heir);
         heir = payable(_heir);
+        withdrawTime = block.timestamp + 30 days;
+        emit WithdrawalTimeIncrease(withdrawTime);
         emit HeirChange(heir);
     }
 }

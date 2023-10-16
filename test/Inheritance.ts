@@ -107,12 +107,28 @@ describe("Inheritance", function () {
     });
 
     describe("WithdrawalTime", function () {
-      it("Should increase WithdrawalTime by 30 days if 0 eht withdrawed by owner", async function () {
+      it("Should increase WithdrawalTime by 30 days if 0 eth withdrawed by owner", async function () {
         const { inheritance, owner } = await loadFixture(
           deployInheritanceFixture
         );
         const currentTimestamp = await time.latest();
         await inheritance.connect(owner).withdraw(0);
+        expect(await inheritance.withdrawTime()).to.greaterThanOrEqual(
+          currentTimestamp + 60 * 60 * 24 * 30
+        );
+      });
+
+      it("Should increase WithdrawalTime by 30 days if non 0 amount withdrawed by owner", async function () {
+        const { inheritance, owner, otherAccount } = await loadFixture(
+          deployInheritanceFixture
+        );
+        const currentTimestamp = await time.latest();
+        await inheritance
+          .connect(otherAccount)
+          .deposit({ value: ethers.parseUnits("2", "ether") });
+        await inheritance
+          .connect(owner)
+          .withdraw(ethers.parseUnits("1", "ether"));
         expect(await inheritance.withdrawTime()).to.greaterThanOrEqual(
           currentTimestamp + 60 * 60 * 24 * 30
         );
@@ -149,6 +165,18 @@ describe("Inheritance", function () {
         await expect(
           inheritance.connect(otherAccount).takeControl(owner.address)
         ).to.be.revertedWith("You aren't the heir");
+      });
+
+      it("Should increase withdrawal time by 30 days", async function () {
+        const { inheritance, owner, heir } = await loadFixture(
+          deployInheritanceFixture
+        );
+        const currentTimestamp = await time.latest();
+        await time.increase(60 * 60 * 24 * 31);
+        await inheritance.connect(heir).takeControl(owner.address);
+        await expect(await inheritance.withdrawTime()).to.greaterThanOrEqual(
+          currentTimestamp + 60 * 60 * 24 * 30
+        );
       });
 
       it("Should allow heir to become owner and set new heir if owner doesn't withdraw for more than 30 days", async function () {
